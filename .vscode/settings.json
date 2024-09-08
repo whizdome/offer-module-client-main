@@ -1,4 +1,7 @@
 {
   "editor.formatOnSave": true,
-  "prettier.useTabs": true
+  "prettier.useTabs": true,
+  "cSpell.words": [
+    "tripplescale"
+  ]
 }
