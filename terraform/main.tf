@@ -42,10 +42,15 @@ resource "aws_vpc" "main" {
 
 # Define Subnets
 resource "aws_subnet" "eks_subnets" {
-  count      = length(var.subnet_cidrs)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = element(var.subnet_cidrs, count.index)
+  count                   = length(var.subnet_cidrs)
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = element(var.subnet_cidrs, count.index)
+  availability_zone       = element(data.aws_availability_zones.available.names, count.index)
+  map_public_ip_on_launch = true # Optional: Set to true if you need public subnets
 }
+
+# Fetch Availability Zones
+data "aws_availability_zones" "available" {}
 
 # Define EKS Cluster
 resource "aws_eks_cluster" "eks_cluster" {
