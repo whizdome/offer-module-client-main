@@ -1,15 +1,4 @@
-resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-}
-
-resource "aws_subnet" "eks_subnets" {
-  count      = length(var.subnet_cidrs)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = element(var.subnet_cidrs, count.index)
-}
-
+# Define IAM Roles for EKS
 resource "aws_iam_role" "eks_role" {
   name = "eks_role"
 
@@ -44,6 +33,21 @@ resource "aws_iam_role" "eks_node_role" {
   })
 }
 
+# Define VPC
+resource "aws_vpc" "main" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+}
+
+# Define Subnets
+resource "aws_subnet" "eks_subnets" {
+  count      = length(var.subnet_cidrs)
+  vpc_id     = aws_vpc.main.id
+  cidr_block = element(var.subnet_cidrs, count.index)
+}
+
+# Define EKS Cluster
 resource "aws_eks_cluster" "eks_cluster" {
   name     = var.cluster_name
   role_arn = aws_iam_role.eks_role.arn
@@ -53,6 +57,7 @@ resource "aws_eks_cluster" "eks_cluster" {
   }
 }
 
+# Define EKS Node Group
 resource "aws_eks_node_group" "eks_nodes" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = var.node_group_name
