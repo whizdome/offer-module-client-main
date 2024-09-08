@@ -1,0 +1,247 @@
+export const passwordRegExp =
+	/^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
+
+export const phoneRegExp =
+	/^((\+[1-9]{1,4}[ -]?)|(\([0-9]{2,3}\)[ -]?)|([0-9]{2,4})[ -]?)*?[0-9]{3,4}[ -]?[0-9]{3,4}$/;
+
+export const otpRegExp = /^[0-9]+$/;
+
+export const hasSpecialCharacter = (value: string) => {
+	return /[!@#$%^&*()\-_=+{};:,<.>]/.test(value);
+};
+
+export const hasCaps = (value: string) => {
+	return /(.*[A-Z].*)/.test(value);
+};
+
+export const hasDigit = (value: string) => {
+	return /(.*\d.*)/.test(value);
+};
+
+export const getDate = (value: string) => {
+	return value.split("T")[0];
+};
+
+export const removePrefix = (input: string) => {
+  if(input?.startsWith("+2340")){
+		return input.slice(5)
+	}else if(input?.startsWith("2340")){
+		return input.slice(4)
+	}else if(input?.startsWith("+234")){
+		return input.slice(4)
+	}else if(input?.startsWith("234")){
+		return input.slice(3)
+	}else if (input?.startsWith("0")) {
+    return input.slice(1);
+  }
+  return input;
+};
+
+export const paystackPK = "pk_test_4b5a68b1b3abc3bf2570abb70390cb3aed001e85";
+
+export const brokerList = [
+  "Associated Asset Managers Limited",
+  "Afrinvest Securities Limited",
+  "Mainstreet Bank Securities Limited",
+  "Anchoria Investment and Securities Limited",
+  "Apel Asset Limited",
+  "APT Securities & Funds Limited",
+  "ARM Securities Limited",
+  "Atlass Portfolio Limited",
+  "Bauchi Investment Corporation Securities Limited",
+  "Capital Bancorp Plc",
+  "Belfry Investment & Securities Limited",
+  "The Bridge Securities Limited",
+  "Bestworth Assets & Trust Limited",
+  "Calyx Securities Limited",
+  "Cowry Securities Limited",
+  "Capital Assets Limited",
+  "Cashville Investments & Securities Limited",
+  "Network Capital Limited",
+  "CDL Capital Markets Limited",
+  "Century Securities Limited",
+  "Centre Point Investment Limited",
+  "Primewealth Capital Limited",
+  "Chapel Hill Denham Securities Limited",
+  "Chartwell Securities Limited",
+  "Citi Investment Capital Limited",
+  "Compass Investments & Securities Limited",
+  "Camry Securities Limited",
+  "Kedari Capital Limited",
+  "Cordros Securities Limited",
+  "Core Securities Limited",
+  "Royal Crest Finance Limited",
+  "Crossworld Securities Limited",
+  "Coronation Securities Limited",
+  "CSL Stockbrokers Limited",
+  "CardinalStone Securities Limited",
+  "Capital Trust Brokers Limited",
+  "Crown Capital Limited",
+  "Dunbell Securities Limited",
+  "De-Lords Securities Limited",
+  "DSU Brokerage Services Limited",
+  "Sankore Securities Limited",
+  "Deep Trust & Investment Limited",
+  "El-Elyon Alliance and Securities Limited",
+  "EDC Securities Limited",
+  "Edgefield Capital Management Limited",
+  "EFG Hermes Nigeria Limited",
+  "Enterprise Stockbrokers Limited",
+  "Equity Capital Solutions Limited",
+  "Eurocomm Securities Limited",
+  "Falcon Securities Limited",
+  "FBC Trust & Securities Limited",
+  "FBNQuest Securities Limited",
+  "FCSL Asset Management Company Limited",
+  "Financial & Analytics Capital Limited",
+  "Fidelity Finance Company Limited",
+  "First Integrated Capital Management Limited",
+  "Finmal Finance Services Limited",
+  "FIS Securities Limited",
+  "Funds Matrix & Asset Management Limited",
+  "Forte Financial Limited",
+  "Forthright Securities & Investments Limited",
+  "Securities & Capital Management Company Limited",
+  "Financial Trust Company Nigeria Limited",
+  "FSL Securities Limited",
+  "Futureview Securities Limited",
+  "Global Asset Management (Nig) Limited",
+  "Gem Assets Management Limited",
+  "Gidauniya Invest & Sec Limited",
+  "Golden Securities Limited",
+  "Gruene Capital Limited",
+  "GTI Securities Limited",
+  "Globalview Capital Limited",
+  "Greenwich Securities Limited",
+  "Heartbeat Investments Limited",
+  "Fortress Capital Limited",
+  "Hedge Securities and Investments Company Limited",
+  "Ava Securities Limited",
+  "ICMG Securities Limited",
+  "Icon Stockbrokers Limited",
+  "Heritage Capital Markets Limited",
+  "Imperial Assets Managers Limited",
+  "Interstate Securities Limited",
+  "Investors & Trust Company Limited",
+  "Investment One Stockbrokers Int’l Limited",
+  "Integrated Trust & Investments Limited",
+  "Kapital Care Trust & Securities Limited",
+  "Kundila Finance Services Limited",
+  "Kofana Securities & Investment Limited",
+  "Lambeth Capital Limited",
+  "Lead Securities & Investment Limited",
+  "Osborne Capital Markets Limited",
+  "Lighthouse Asset Management Limited",
+  "Magnartis Finance & Investment Limited",
+  "Morgan Capital Securities Limited",
+  "Meristem Stockbrokers Limited",
+  "Marimpex Finance & Investment Company Limited",
+  "Mega Equities Limited",
+  "Midas Stockbrokers Limited",
+  "Mountain Investment & Securities Limited",
+  "Milestone Capital Management Limited",
+  "Molten Trust Limited",
+  "Mission Securities Limited",
+  "Norrenberger Securities Limited",
+  "Newdevco Investment & Securities Limited",
+  "Networth Securities & Finance Limited",
+  "Nigerian Stockbrokers Limited",
+  "PAC Securities Limited",
+  "Portfolio Advisers Limited",
+  "Planet Capital Limited",
+  "Pilot Securities Limited",
+  "Pinefields Investment Services Limited",
+  "PIPC Securities Limited",
+  "Pivot Capital Limited",
+  "Prominent Securities Limited",
+  "Parthian Securities Limited",
+  "Pyramid Securities Limited",
+  "Qualinvest Capital Limited",
+  "Rainbow Securities Limited",
+  "Regency Assets Management Limited",
+  "Rowet Capital Management Limited",
+  "Fundvine Capital & Securities Limited",
+  "Royal Guaranty & Trust Limited",
+  "Rostrum Investment & Securities Limited",
+  "RMB Nigeria Stockbrokers Limited",
+  "Rencap Securities (Nig) Limited",
+  "Resort Securities Limited",
+  "Reward Investment & Service Limited",
+  "Securities Africa Financial Limited",
+  "Signet Investment & Securities Limited",
+  "Shelong Investment Limited",
+  "Foresight Securities & Investment Limited",
+  "Sigma Securities Limited",
+  "Stanbic IBTC Stockbrokers Limited",
+  "Shalom Investment & Securities Limited",
+  "Smadac Securities Limited",
+  "Spring Trust & Securities Limited",
+  "Spring Board Trust & Investment Limited",
+  "Standard Union Securities Limited",
+  "Premium Capital and Stockbrokers Limited",
+  "Skyview Capital Limited",
+  "Security Swaps Limited",
+  "Trustbanc Capital Management Limited",
+  "Trusthouse Investment Limited",
+  "Tiddo Securities Limited",
+  "Trade link Securities Limited",
+  "Tomil Trust Limited",
+  "Topmost Securities Limited",
+  "Tower Securities & Investment Company Limited",
+  "Transworld Investment & Securities Limited",
+  "TRW Stockbrokers Limited",
+  "Tyndale Securities Limited",
+  "United Capital Securities Limited",
+  "UNEX Capital Limited",
+  "UCML Capital Limited",
+  "UIDC Securities Limited",
+  "Vetiva Securities Limited",
+  "WCM Capital Limited",
+  "WSTC Securities Limited",
+  "Express Portfolio Services Limited",
+  "Nova Finance & Securities Limited",
+  "NOVAMBL Securities Limited",
+  "Zion Stockbrokers & Securities Limited",
+  "Quantum Zenith Securities & Investments Limited"
+];
+
+export const statesInNigeria = [
+  "Abia",
+  "Adamawa",
+  "Akwa Ibom",
+  "Anambra",
+  "Bauchi",
+  "Bayelsa",
+  "Benue",
+  "Borno",
+  "Cross River",
+  "Delta",
+  "Ebonyi",
+  "Edo",
+  "Ekiti",
+  "Enugu",
+  "FCT - Abuja",
+  "Gombe",
+  "Imo",
+  "Jigawa",
+  "Kaduna",
+  "Kano",
+  "Katsina",
+  "Kebbi",
+  "Kogi",
+  "Kwara",
+  "Lagos",
+  "Nasarawa",
+  "Niger",
+  "Ogun",
+  "Ondo",
+  "Osun",
+  "Oyo",
+  "Plateau",
+  "Rivers",
+  "Sokoto",
+  "Taraba",
+  "Yobe",
+  "Zamfara",
+  "Others"
+];
