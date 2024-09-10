@@ -1,4 +1,4 @@
-# IAM Roles and Policies
+# Define IAM Roles for EKS
 resource "aws_iam_role" "eks_role" {
   name = "eks_role"
 
