@@ -98,8 +98,9 @@ resource "aws_route_table" "main" {
 }
 
 resource "aws_route_table_association" "main" {
-  count          = length(aws_subnet.eks_subnets)
-  subnet_id      = aws_subnet.eks_subnets[count.index].id
+  for_each = { for subnet in aws_subnet.eks_subnets : subnet.id => subnet }
+
+  subnet_id      = each.key
   route_table_id = aws_route_table.main.id
 }
 
