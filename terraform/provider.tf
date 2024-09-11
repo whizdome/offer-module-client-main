@@ -15,16 +15,6 @@ terraform {
     }
   }
 
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "tripplescale"
-
-    workspaces {
-      name = "offer-module-client-main"
-    }
-  }
-}
-
 # Data source to get EKS cluster information
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
