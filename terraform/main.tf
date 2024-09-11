@@ -1,26 +1,73 @@
-module "eks" {
-  source                  = "./modules/eks"
-  aws_public_subnet       = module.vpc.aws_public_subnet
-  vpc_id                  = module.vpc.vpc_id
-  cluster_name            = "tripplescale_cluster"
-  endpoint_public_access  = true
-  endpoint_private_access = false
-  public_access_cidrs     = ["0.0.0.0/0"]
-  node_group_name         = "tripplescale"
-  scaling_desired_size    = 1
-  scaling_max_size        = 1
-  scaling_min_size        = 1
-  instance_types          = ["t2.micro"]
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+  backend "s3" {
+    bucket = "your-terraform-state-bucket"
+    key    = "terraform.tfstate"
+    region = "eu-west-2"
+  }
+}
+
+provider "aws" {
+  region = var.region
 }
 
 module "vpc" {
-  source                  = "./modules/vpc"
-  tags                    = "tripplescale"
-  instance_tenancy        = "default"
-  vpc_cidr                = "10.0.0.0/16"
-  access_ip               = "0.0.0.0/0"
-  public_sn_count         = 2
-  public_cidrs            = ["10.0.1.0/24", "10.0.2.0/24"]
-  map_public_ip_on_launch = true
-  rt_route_cidr_block     = "0.0.0.0/0"
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = "tripplescale-vpc"
+  cidr = var.vpc_cidr
+
+  azs             = ["${var.region}a", "${var.region}b", "${var.region}c"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+
+  enable_nat_gateway = true
+  single_nat_gateway = true
+  enable_vpn_gateway = false
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 19.0"
+
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  eks_managed_node_groups = {
+    default = {
+      min_size     = 1
+      max_size     = 3
+      desired_size = 2
+
+      instance_types = var.instance_types
+      capacity_type  = "ON_DEMAND"
+    }
+  }
+
+  tags = {
+    Environment = "dev"
+    Terraform   = "true"
+  }
+}
+
+resource "aws_ecr_repository" "app_repo" {
+  name                 = "my-app"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }
