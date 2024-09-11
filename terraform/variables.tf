@@ -1,57 +1,22 @@
-variable "region" {
-  description = "AWS region where resources will be deployed"
-  type        = string
-  default     = "eu-west-2"
-}
 
-variable "cluster_name" {
-  description = "The name of the EKS cluster"
-  type        = string
-  default     = "tripplescale_cluster"
-}
+variable "aws_public_subnet" {}
 
-variable "node_group_name" {
-  description = "The name of the EKS node group"
-  type        = string
-  default     = "default-node-group"
-}
+variable "vpc_id" {}
 
-variable "desired_size" {
-  description = "The desired size of the node group"
-  type        = number
-  default     = 2
-  validation {
-    condition     = var.desired_size >= 1
-    error_message = "The desired size must be at least 1."
-  }
-}
+variable "cluster_name" {}
 
-variable "max_size" {
-  description = "The maximum size of the node group"
-  type        = number
-  default     = 5
-  validation {
-    condition     = var.max_size >= var.desired_size
-    error_message = "The maximum size must be greater than or equal to the desired size."
-  }
-}
+variable "endpoint_private_access" {}
 
-variable "min_size" {
-  description = "The minimum size of the node group"
-  type        = number
-  default     = 1
-  validation {
-    condition     = var.min_size >= 1
-    error_message = "The minimum size must be at least 1."
-  }
-}
+variable "endpoint_public_access" {}
 
-variable "subnet_cidrs" {
-  description = "List of CIDR blocks for the subnets"
-  type        = list(string)
-  default = [
-    "10.0.1.0/24", # Should be in AZ 1
-    "10.0.2.0/24", # Should be in AZ 2
-    "10.0.3.0/24"  # Should be in AZ 3
-  ]
-}
+variable "public_access_cidrs" {}
+
+variable "node_group_name" {}
+
+variable "scaling_desired_size" {}
+
+variable "scaling_max_size" {}
+
+variable "scaling_min_size" {}
+
+variable "instance_types" {}
