@@ -1,8 +1,11 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
+
+      source = "hashicorp/aws"
+
+      version = "~> 4.83.0" # Adjust this to a specific valid version if needed
+
     }
   }
 }
@@ -32,7 +35,7 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.0"
+  version = "~> 19.21.0" # Adjust as needed
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
