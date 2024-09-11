@@ -34,6 +34,10 @@ jobs:
           terraform -chdir=terraform import aws_iam_role_policy_attachment.eks_worker_node_policy eks_node_role/AmazonEKSWorkerNodePolicy
           terraform -chdir=terraform import aws_iam_role_policy_attachment.eks_cni_policy eks_node_role/AmazonEKS_CNI_Policy
           terraform -chdir=terraform import aws_iam_role_policy_attachment.ec2_container_registry_read_only eks_node_role/AmazonEC2ContainerRegistryReadOnly
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
       # Step 5: Terraform Apply to Create EKS Cluster
       - name: Apply Terraform
