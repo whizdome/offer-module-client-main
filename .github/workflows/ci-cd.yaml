@@ -25,7 +25,17 @@ jobs:
       - name: Initialize Terraform
         run: terraform -chdir=terraform init
 
-      # Step 4: Terraform Apply to Create EKS Cluster
+      # Step 4: Terraform Import
+      - name: Import Terraform Resources
+        run: |
+          terraform -chdir=terraform import aws_iam_role.eks_role eks_role
+          terraform -chdir=terraform import aws_iam_role.eks_node_role eks_node_role
+          terraform -chdir=terraform import aws_iam_role_policy_attachment.eks_cluster_policy eks_role/AmazonEKSClusterPolicy
+          terraform -chdir=terraform import aws_iam_role_policy_attachment.eks_worker_node_policy eks_node_role/AmazonEKSWorkerNodePolicy
+          terraform -chdir=terraform import aws_iam_role_policy_attachment.eks_cni_policy eks_node_role/AmazonEKS_CNI_Policy
+          terraform -chdir=terraform import aws_iam_role_policy_attachment.ec2_container_registry_read_only eks_node_role/AmazonEC2ContainerRegistryReadOnly
+
+      # Step 5: Terraform Apply to Create EKS Cluster
       - name: Apply Terraform
         run: terraform -chdir=terraform apply -auto-approve
         env:
