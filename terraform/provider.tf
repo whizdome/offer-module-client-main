@@ -14,7 +14,7 @@ terraform {
       version = ">= 2.0.1"
     }
   }
-
+}
 # Data source to get EKS cluster information
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
