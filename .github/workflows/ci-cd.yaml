@@ -92,7 +92,7 @@ jobs:
         run: |
           docker push ${{ env.ECR_REPO_URL }}:${{ env.IMAGE_TAG }}
 
-      # Step 9: Set up kubectl for EKS
+      # Step 9: Set up the kubectl for EKS
       - name: Set up kubectl
         run: |
           aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
