@@ -32,7 +32,7 @@ jobs:
           cat << EOF > terraform/backend.tf
           terraform {
             backend "s3" {
-              bucket = "your-terraform-state-bucket"
+              bucket = "tripplescale-tf-backend"
               key    = "terraform.tfstate"
               region = "${{ secrets.AWS_REGION }}"
             }
