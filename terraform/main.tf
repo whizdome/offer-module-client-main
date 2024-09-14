@@ -9,15 +9,6 @@ terraform {
 
 }
 
-terraform {
-  backend "s3" {
-    bucket = "tripplescale-tf-backend"
-    key = "terraform.tfstate"
-    region = "eu-west-2"
-    encrypt = true
-  }
-}
-
 provider "aws" {
   region = var.region
 }
