@@ -41,7 +41,7 @@ jobs:
         run: |
           ECR_REPO_URL=$(terraform -chdir=terraform output -raw ecr_repository_url)
           echo "ECR_REPO_URL=$ECR_REPO_URL" >> $GITHUB_ENV
-        # Outputs the repository URL to GitHub environment variables
+
         shell: bash
 
   build-and-deploy:
