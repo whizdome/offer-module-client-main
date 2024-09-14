@@ -15,33 +15,41 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
+    outputs:
+      ecr_repo_url: ${{ steps.get-ecr-url.outputs.ecr_repo_url }}
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.4.0
 
-      # Step 3: Initialize Terraform
+      - name: Terraform Backend Config
+        run: |
+          cat << EOF > terraform/backend.tf
+          terraform {
+            backend "s3" {
+              bucket = "your-terraform-state-bucket"
+              key    = "terraform.tfstate"
+              region = "${{ secrets.AWS_REGION }}"
+            }
+          }
+          EOF
+
       - name: Terraform Init
         run: terraform -chdir=terraform init
 
-      # Step 4: Apply Terraform Configuration
       - name: Terraform Apply
         run: terraform -chdir=terraform apply -auto-approve
 
-      # Step 5: Retrieve ECR Repository URL
       - name: Get ECR Repository URL
         id: get-ecr-url
         run: |
           ECR_REPO_URL=$(terraform -chdir=terraform output -raw ecr_repository_url)
-          echo "::set-output name=ecr_repo_url::$ECR_REPO_URL"
-        shell: bash
+          echo "ecr_repo_url=$ECR_REPO_URL" >> $GITHUB_OUTPUT
 
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -54,68 +62,66 @@ jobs:
       ECR_REPO_URL: ${{ needs.terraform-setup.outputs.ecr_repo_url }}
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Build the React app
       - name: Build React app
         run: npm run build
 
-      # Step 5: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Step 6: Log in to Amazon ECR
       - name: Log in to Amazon ECR
         id: ecr-login
         uses: aws-actions/amazon-ecr-login@v1
 
-      # Step 7: Build and tag Docker image
       - name: Build and tag Docker image
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
           docker build -t ${{ env.ECR_REPO_URL }}:${IMAGE_TAG} .
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
-      # Step 8: Push Docker image to ECR
+
       - name: Push Docker image to ECR
         run: |
           docker push ${{ env.ECR_REPO_URL }}:${{ env.IMAGE_TAG }}
 
-      # Step 9: Set up the kubectl for EKS
       - name: Set up kubectl
         run: |
-          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
-      # Step 10: Deploy to Kubernetes (EKS)
       - name: Deploy to Kubernetes
         run: |
+          sed -i 's|IMAGE_URL|${{ env.ECR_REPO_URL }}:${{ env.IMAGE_TAG }}|g' k8s/deployment.yaml
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
           kubectl apply -f k8s/ingress.yaml
 
-      # Step 11: Update Route 53 for admin.tripplescale.co
       - name: Update Route 53 for admin.tripplescale.co
         run: |
           ALB_DNS=$(kubectl get ingress my-app-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
-          aws route53 change-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --change-batch '{
+          aws route53 change-resource-record-sets --hosted-zone-id ${{ env.HOSTED_ZONE_ID }} --change-batch '{
             "Changes": [{
               "Action": "UPSERT",
               "ResourceRecordSet": {
                 "Name": "admin.tripplescale.co",
                 "Type": "A",
                 "AliasTarget": {
-                  "HostedZoneId": "Z35SXDOTRQ7X7K", # ALB hosted zone ID
+                  "HostedZoneId": "Z35SXDOTRQ7X7K",
                   "DNSName": "'$ALB_DNS'",
                   "EvaluateTargetHealth": false
                 }
