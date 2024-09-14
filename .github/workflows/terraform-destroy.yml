@@ -1,6 +1,5 @@
 name: Terraform Destroy
 
-# Manually triggered using workflow_dispatch
 on:
   workflow_dispatch: # Allows manual trigger
 
