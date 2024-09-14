@@ -50,6 +50,7 @@ jobs:
         run: |
           ECR_REPO_URL=$(terraform -chdir=terraform output -raw ecr_repository_url)
           echo "ECR_REPO_URL=$ECR_REPO_URL" >> $GITHUB_ENV
+          echo "::set-output name=ecr_repo_url::$ECR_REPO_URL"
 
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -59,7 +60,7 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
       HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
-      ECR_REPO_URL: ${{ steps.get-ecr-url.outputs.ecr_repo_url }}
+      ECR_REPO_URL: ${{ needs.terraform-setup.outputs.ecr_repo_url }}
 
     steps:
       - name: Checkout code
