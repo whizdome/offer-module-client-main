@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: my-app
-          image: IMAGE_URL  # This will be replaced in the pipeline
+          image: IMAGE_URL
           ports:
             - containerPort: 80
           livenessProbe:

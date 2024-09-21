@@ -4,12 +4,12 @@ metadata:
   name: my-app-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Change to "true" when enabling SSL
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
-  tls:                       # Optional TLS configuration
+  tls:                       
     - hosts:
         - admin.tripplescale.co
-      secretName: my-app-tls  # Replace with your actual TLS secret
+      secretName: my-app-tls
   rules:
     - host: admin.tripplescale.co
       http:
