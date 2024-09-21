@@ -131,7 +131,7 @@ jobs:
                 "Action": "UPSERT",
                 "ResourceRecordSet": {
                   "Name": "admin.tripplescale.co",
-                  "Type": "A",
+                  "Type": "NS",
                   "AliasTarget": {
                     "HostedZoneId": "Z06217083AHXJ9OSX0V5C",
                     "DNSName": "'"${ALB_DNS}"'",
