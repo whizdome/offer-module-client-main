@@ -98,14 +98,17 @@ jobs:
           docker push ${{ env.ECR_REPO_URL }}:latest
 
       - name: Set up kubectl
-        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+        run: |
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+          kubectl config current-context
+          kubectl get nodes || echo "Unable to connect to EKS"
 
       - name: Deploy to Kubernetes
         run: |
           sed -i 's|IMAGE_URL|${{ env.ECR_REPO_URL }}:${{ env.IMAGE_TAG }}|g' k8s/deployment.yaml
-          kubectl apply -f k8s/deployment.yaml --request-timeout=60s --validate=false
-          kubectl apply -f k8s/service.yaml --request-timeout=60s --validate=false
-          kubectl apply -f k8s/ingress.yaml --request-timeout=60s --validate=false || exit 0  # Ignore ingress errors
+          kubectl apply -f k8s/deployment.yaml --request-timeout=120s --validate=false
+          kubectl apply -f k8s/service.yaml --request-timeout=120s --validate=false
+          kubectl apply -f k8s/ingress.yaml --request-timeout=120s --validate=false || exit 0  # Ignore ingress errors
 
       - name: Update Route 53 for admin.tripplescale.co
         run: |
