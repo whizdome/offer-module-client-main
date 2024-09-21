@@ -49,11 +49,11 @@ jobs:
         id: get-ecr-url
         run: |
           ECR_REPO_URL=$(terraform -chdir=terraform output -raw ecr_repository_url)
-          echo "ECR_REPO_URL<<$ECR_REPO_URL" >> $GITHUB_ENV
-        # Capturing output in job-level output
+          echo "ECR_REPO_URL=$ECR_REPO_URL" >> $GITHUB_ENV
+
       - name: Set output for ECR Repo URL
         run: echo "::set-output name=ecr_repo_url::$ECR_REPO_URL"
-        id: set-ecr-url-output # Capture the output for this step
+        id: set-ecr-url-output
 
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -98,11 +98,13 @@ jobs:
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
           docker build -t ${{ env.ECR_REPO_URL }}:${IMAGE_TAG} .
+          docker tag ${{ env.ECR_REPO_URL }}:${IMAGE_TAG} ${{ env.ECR_REPO_URL }}:latest
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
       - name: Push Docker image to ECR
         run: |
           docker push ${{ env.ECR_REPO_URL }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.ECR_REPO_URL }}:latest
 
       - name: Set up kubectl
         run: |
