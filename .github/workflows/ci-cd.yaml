@@ -107,23 +107,22 @@ jobs:
             kubectl apply -f k8s/deployment.yaml --request-timeout=60s --validate=false
             kubectl apply -f k8s/service.yaml --request-timeout=60s --validate=false
             kubectl apply -f k8s/ingress.yaml --request-timeout=60s --validate=false || exit 0  # Ignore ingress errors
-            
-            
-          - name: Update Route 53 for admin.tripplescale.co
-          run: |
-            ALB_DNS=$(kubectl get ingress my-app-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" || echo "None")
-            if [ "$ALB_DNS" != "None" ]; then
-              aws route53 change-resource-record-sets --hosted-zone-id ${{ env.HOSTED_ZONE_ID }} --change-batch '{
-                "Changes": [{
-                  "Action": "UPSERT",
-                  "ResourceRecordSet": {
-                    "Name": "admin.tripplescale.co",
-                    "Type": "A",
-                    "AliasTarget": {
-                      "HostedZoneId": "Z35SXDOTRQ7X7K",
-                      "DNSName": "'$ALB_DNS'",
-                      "EvaluateTargetHealth": false
-                    }
+
+      - name: Update Route 53 for admin.tripplescale.co
+        run: |
+          ALB_DNS=$(kubectl get ingress my-app-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" || echo "None")
+          if [ "$ALB_DNS" != "None" ]; then
+            aws route53 change-resource-record-sets --hosted-zone-id ${{ env.HOSTED_ZONE_ID }} --change-batch '{
+              "Changes": [{
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                  "Name": "admin.tripplescale.co",
+                  "Type": "A",
+                  "AliasTarget": {
+                    "HostedZoneId": "Z35SXDOTRQ7X7K",
+                    "DNSName": "'$ALB_DNS'",
+                    "EvaluateTargetHealth": false
                   }
-                }]
-              }'
+                }
+              }]
+            }'
