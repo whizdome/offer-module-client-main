@@ -133,7 +133,7 @@ jobs:
                   "Name": "admin.tripplescale.co",
                   "Type": "A",
                   "AliasTarget": {
-                    "HostedZoneId": "Z35SXDOTRQ7X7K",
+                    "HostedZoneId": "Z06217083AHXJ9OSX0V5C",
                     "DNSName": "'"${ALB_DNS}"'",
                     "EvaluateTargetHealth": false
                   }
