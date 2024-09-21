@@ -122,24 +122,24 @@ jobs:
             echo "Ingress application failed." || exit 0  # Ignore ingress errors
           fi
 
-      - name: Update Route 53 for admin.tripplescale.co
-        run: |
-          ALB_DNS=$(kubectl get ingress my-app-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" || echo "None")
-          if [ "$ALB_DNS" != "None" ]; then
-            aws route53 change-resource-record-sets --hosted-zone-id ${{ env.HOSTED_ZONE_ID }} --change-batch '{
-              "Changes": [{
-                "Action": "UPSERT",
-                "ResourceRecordSet": {
-                  "Name": "admin.tripplescale.co",
-                  "Type": "NS",
-                  "AliasTarget": {
-                    "HostedZoneId": "Z06217083AHXJ9OSX0V5C",
-                    "DNSName": "'"${ALB_DNS}"'",
-                    "EvaluateTargetHealth": false
+          - name: Update Route 53 for admin.tripplescale.co
+          run: |
+            ALB_DNS=$(kubectl get ingress my-app-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}" || echo "None")
+            if [ "$ALB_DNS" != "None" ]; then
+              aws route53 change-resource-record-sets --hosted-zone-id ${{ env.HOSTED_ZONE_ID }} --change-batch '{
+                "Changes": [{
+                  "Action": "UPSERT",
+                  "ResourceRecordSet": {
+                    "Name": "admin.tripplescale.co",
+                    "Type": "A",
+                    "AliasTarget": {
+                      "HostedZoneId": "Z32O12XQLNTSW2",  # HostedZoneId for ALB in eu-west-2
+                      "DNSName": "'"${ALB_DNS}"'",
+                      "EvaluateTargetHealth": false
+                    }
                   }
-                }
-              }]
-            }'
-          else
-            echo "ALB DNS not found; skipping Route 53 update."
-          fi
+                }]
+              }'
+            else
+              echo "ALB DNS not found; skipping Route 53 update."
+            fi
