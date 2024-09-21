@@ -49,8 +49,9 @@ jobs:
         id: get-ecr-url
         run: |
           ECR_REPO_URL=$(terraform -chdir=terraform output -raw ecr_repository_url)
-          echo "ECR_REPO_URL=$ECR_REPO_URL" >> $GITHUB_ENV  # Store in environment file for other jobs
-          echo "ECR_REPO_URL=$ECR_REPO_URL" >> $GITHUB_ENV  # Deprecated set-output removed
+          echo "ECR_REPO_URL=$ECR_REPO_URL" >> $GITHUB_ENV
+        outputs:
+          ecr_repo_url: ${{ steps.get-ecr-url.outputs.ECR_REPO_URL }}
 
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -60,7 +61,7 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
       HOSTED_ZONE_ID: ${{ secrets.HOSTED_ZONE_ID }}
-      ECR_REPO_URL: ${{ env.ECR_REPO_URL }} # Reference ECR URL from previous job
+      ECR_REPO_URL: ${{ needs.terraform-setup.outputs.ecr_repo_url }} # Use output from the previous job
 
     steps:
       - name: Checkout code
@@ -95,7 +96,7 @@ jobs:
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
           docker build -t ${{ env.ECR_REPO_URL }}:${IMAGE_TAG} .
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV  # Save image tag to environment
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
       - name: Push Docker image to ECR
         run: |
