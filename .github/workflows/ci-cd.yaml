@@ -81,7 +81,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build React/Next.js app
+      - name: Build Next.js app
         run: npm run build
 
       - name: Set up Docker Buildx
