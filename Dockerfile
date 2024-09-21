@@ -28,7 +28,6 @@ RUN npm run build
 # Remove dev dependencies
 RUN npm prune --production
 
-# Stage 2: Production
 FROM node:20-buster-slim
 
 WORKDIR /app

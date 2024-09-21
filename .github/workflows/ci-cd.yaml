@@ -106,9 +106,21 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           sed -i 's|IMAGE_URL|${{ env.ECR_REPO_URL }}:${{ env.IMAGE_TAG }}|g' k8s/deployment.yaml
-          kubectl apply -f k8s/deployment.yaml --request-timeout=120s --validate=false
-          kubectl apply -f k8s/service.yaml --request-timeout=120s --validate=false
-          kubectl apply -f k8s/ingress.yaml --request-timeout=120s --validate=false || exit 0  # Ignore ingress errors
+          if kubectl apply -f k8s/deployment.yaml --request-timeout=120s --validate=false; then
+            echo "Deployment successful."
+          else
+            echo "Deployment failed." && exit 1
+          fi
+          if kubectl apply -f k8s/service.yaml --request-timeout=120s --validate=false; then
+            echo "Service applied successfully."
+          else
+            echo "Service application failed." && exit 1
+          fi
+          if kubectl apply -f k8s/ingress.yaml --request-timeout=120s --validate=false; then
+            echo "Ingress applied successfully."
+          else
+            echo "Ingress application failed." || exit 0  # Ignore ingress errors
+          fi
 
       - name: Update Route 53 for admin.tripplescale.co
         run: |

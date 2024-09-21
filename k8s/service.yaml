@@ -5,6 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 80
+    - port: 80           # The port that will be exposed
+      targetPort: 80     # The port on the container
   selector:
     app: my-app
