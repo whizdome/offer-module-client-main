@@ -50,8 +50,10 @@ jobs:
         run: |
           ECR_REPO_URL=$(terraform -chdir=terraform output -raw ecr_repository_url)
           echo "ECR_REPO_URL=$ECR_REPO_URL" >> $GITHUB_ENV
-        outputs:
-          ecr_repo_url: ${{ steps.get-ecr-url.outputs.ECR_REPO_URL }}
+        # Capturing output in job-level output
+      - name: Set output for ECR Repo URL
+        run: echo "::set-output name=ecr_repo_url::$ECR_REPO_URL"
+        id: set-ecr-url-output # Capture the output for this step
 
   build-and-deploy:
     runs-on: ubuntu-latest
