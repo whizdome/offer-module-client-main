@@ -1,4 +1,4 @@
-name: CI/CD Pipeline with Terraform and EKS
+name: CI/CD Pipeline to build and push to ECR
 on:
   push:
     branches:
